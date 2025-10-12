@@ -1,0 +1,3 @@
+C:/Users/jimya/Documents/Ray Tracer/build/CMakeFiles/RayTracer.dir
+C:/Users/jimya/Documents/Ray Tracer/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/jimya/Documents/Ray Tracer/build/CMakeFiles/ZERO_CHECK.dir
