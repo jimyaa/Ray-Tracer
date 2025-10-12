@@ -52,6 +52,7 @@ int main() {
 
     camera cam;
 
+    // Camera Settings
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 1200;
     cam.samples_per_pixel = 500;
@@ -66,6 +67,7 @@ int main() {
     cam.focus_dist    = 10.0;
 
     cam.progress_bar_length = 30;
+    cam.file_name = "output.png";
 
     cam.render(world);
 }

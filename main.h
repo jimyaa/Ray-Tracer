@@ -7,6 +7,7 @@
 #include <limits>
 #include <memory>
 #include <random>
+#include <string>
 
 // C++ Std Usings
 

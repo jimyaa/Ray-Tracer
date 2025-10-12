@@ -3,6 +3,7 @@
 
 #include "hittable.h"
 #include "material.h"
+#include "wpng.h"
 
 #include <chrono>
 #include <string>
@@ -13,6 +14,7 @@
 #include <vector>
 #include <mutex>
 #include <cmath>
+#include <string>
 
 class camera {
   public:
@@ -30,6 +32,7 @@ class camera {
     double focus_dist = 10;    // Distance from camera lookfrom point to plane of perfect focus
     
     int progress_bar_length = 30; // Amount of characters in the progress bar
+    std::string file_name = "image.png";
 
     void render(const hittable& world) {
         initialize();
@@ -80,7 +83,7 @@ class camera {
                           << std::setfill(' ')
                           << std::flush;
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
 
             // Final line
@@ -115,11 +118,9 @@ class camera {
         done_flag.store(true, std::memory_order_relaxed);
         reporter.join();
 
-        // ---- Output PPM (average via pixel_samples_scale; gamma handled by write_color) ----
-        std::cout << "P3\n" << W << ' ' << H << "\n255\n";
-        for (int j = 0; j < H; ++j)
-            for (int i = 0; i < W; ++i)
-                write_color(std::cout, pixel_samples_scale * framebuffer[j * W + i]);
+        std::vector<uint8_t> rgb;
+        colors_to_rgb8(framebuffer, image_width, image_height, samples_per_pixel, rgb);
+        write_png(file_name.c_str(), rgb, image_width, image_height);
     }
 
   private:
