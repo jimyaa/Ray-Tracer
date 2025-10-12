@@ -1,6 +1,6 @@
 # vcpkg build artifacts
-/vcpkg_installed/
-/build/
+vcpkg_installed/
+build/
 CMakeCache.txt
 CMakeFiles/
 
