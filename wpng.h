@@ -3,6 +3,9 @@
 #include <vector>
 #include <cstdio>
 #include <stdexcept>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 inline double clampd(double x, double lo, double hi) {
     return x < lo ? lo : (x > hi ? hi : x);
@@ -39,13 +42,18 @@ inline void write_png(const char* filename,
     if (rgb.size() != static_cast<size_t>(W) * static_cast<size_t>(H) * 3)
         throw std::runtime_error("write_png: RGB buffer size mismatch");
 
-    // MSVC-safe open
+    fs::path out_dir = "output";
+    fs::create_directories(out_dir);
+
+    // Combine directory + filename
+    fs::path out_path = out_dir / filename;
+
     FILE* fp = nullptr;
 #if defined(_MSC_VER)
-    if (fopen_s(&fp, filename, "wb") != 0 || !fp)
+    if (fopen_s(&fp, out_path.string().c_str(), "wb") != 0 || !fp)
         throw std::runtime_error("write_png: cannot open output file");
 #else
-    fp = std::fopen(filename, "wb");
+    fp = std::fopen(out_path.string().c_str(), "wb");
     if (!fp) throw std::runtime_error("write_png: cannot open output file");
 #endif
 

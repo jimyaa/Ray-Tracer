@@ -5,10 +5,10 @@ CMakeCache.txt
 CMakeFiles/
 
 # Optional: the vcpkg binary itself and downloads
-/vcpkg/
-/vcpkg_downloads/
-/vcpkg_buildtrees/
-/vcpkg_packages/
+# /vcpkg/
+# /vcpkg_downloads/
+# /vcpkg_buildtrees/
+# /vcpkg_packages/
 
 # Visual Studio temporary stuff
 *.VC.db
@@ -18,5 +18,3 @@ CMakeFiles/
 *.pdb
 
 # Ignore output images
-*.ppm
-*.png

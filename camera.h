@@ -22,6 +22,7 @@ class camera {
     int    image_width  = 100;  // Rendered image width in pixel count
     int    samples_per_pixel = 10;   // Count of random samples for each pixel
     int    max_depth         = 10;   // Maximum number of ray bounces into scene
+    color  background;               // Scene background color
 
     double vfov = 90;  // Vertical view angle (field of view)
     point3 lookfrom = point3(0,0,0);   // Point camera is looking from
@@ -86,10 +87,18 @@ class camera {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
 
+            double dt = std::chrono::duration<double>(clock::now() - t0).count();
+            int rem  = int(std::ceil(dt));
+                int hrs  = rem / 3600;
+                int mins = (rem % 3600) / 60;
+                int secs = rem % 60;
+
             // Final line
             std::clog << "\r[" << std::string(barWidth, '#') << "] 100% | "
                       << total_rows << "/" << total_rows
-                      << " | ETA: 00:00  Done.\n";
+                      << " | Runtime: "<< (hrs > 0 ? (std::to_string(hrs) + ":") : "")
+                          << std::setfill('0') << std::setw(2) << mins << ':'
+                          << std::setw(2) << secs << "\n";
         });
 
         auto worker = [&]{
@@ -182,8 +191,9 @@ class camera {
 
         auto ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample();
         auto ray_direction = pixel_sample - ray_origin;
+        auto ray_time = random_double();
 
-        return ray(ray_origin, ray_direction);
+        return ray(ray_origin, ray_direction, ray_time);
     }
 
     vec3 sample_square() const {
@@ -204,17 +214,20 @@ class camera {
 
         hit_record rec;
 
-        if (world.hit(r, interval(0.001, infinity), rec)) {
-            ray scattered;
-            color attenuation;
-            if (rec.mat->scatter(r, rec, attenuation, scattered))
-                return attenuation * ray_color(scattered, depth-1, world);
-            return color(0,0,0);
-        }
+        // If the ray hits nothing, return the background color.
+        if (!world.hit(r, interval(0.001, infinity), rec))
+            return background;
 
-        vec3 unit_direction = unit_vector(r.direction());
-        auto a = 0.5*(unit_direction.y() + 1.0);
-        return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
+        ray scattered;
+        color attenuation;
+        color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+
+        if (!rec.mat->scatter(r, rec, attenuation, scattered))
+            return color_from_emission;
+
+        color color_from_scatter = attenuation * ray_color(scattered, depth-1, world);
+
+        return color_from_emission + color_from_scatter;
     }
 };
 
