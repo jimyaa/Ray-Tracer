@@ -1,5 +1,11 @@
 {
   "name": "raytracer",
   "version-string": "0.1.0",
-  "dependencies": [ "libpng", "zlib" ]
+  "dependencies": [
+    "libpng",
+    "zlib",
+    { "name": "imgui", "features": ["glfw-binding", "opengl3-binding"] },
+    "glfw3",
+    "glad"
+  ]
 }

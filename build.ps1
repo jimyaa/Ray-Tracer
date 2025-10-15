@@ -112,5 +112,3 @@ if (Test-Path $exePath) {
 } else {
   Warn ("Build succeeded but RayTracer.exe not found in " + (Join-Path $BuildDir $Config))
 }
-
-
