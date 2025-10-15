@@ -4,26 +4,29 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(PNG REQUIRED)
 
+# Pick up all .cpp sources (add CONFIGURE_DEPENDS so it reconfigures when files are added)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
+
+# (Optional) collect headers just so they show up in IDEs
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS src/*.h)
+
 add_executable(RayTracer
-    src/main.cpp
-    src/aabb.h
-    src/bvh.h
-    src/camera.h
-    src/color.h
-    src/constant_medium.h
-    src/hittable.h
-    src/hittable_list.h
-    src/interval.h
-    src/main.h
-    src/material.h
-    src/perlin.h
-    src/quad.h
-    src/ray.h
-    src/rtw_stb_image.h
-    src/sphere.h
-    src/texture.h
-    src/vec3.h
-    src/wpng.h
+    ${SOURCES}
+    ${HEADERS}
+)
+
+# Make "color.h", "ray.h", etc. resolvable without subfolder prefixes
+target_include_directories(RayTracer PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/image
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/image/external
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/materials
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/materials/textures
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/materials/volumes
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/objects/primatives
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/objects
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/acceleration
 )
 
 target_link_libraries(RayTracer PRIVATE PNG::PNG)
